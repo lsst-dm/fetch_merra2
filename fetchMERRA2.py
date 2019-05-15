@@ -22,10 +22,12 @@ latest available data are from previous month
 '''
 
 '''
-Template for request : 
-"http://goldsmr4.gesdisc.eosdis.nasa.gov/daac-bin/OTF/HTTP_services.cgi?FILENAME=%2Fdata%2FMERRA2%2FM2I1NXASM.5.12.4%2F2018%2F01%2FMERRA2_400.inst1_2d_asm_Nx.20180101.nc4&FORMAT=bmM0Lw&BBOX=-32.587%2C-73.213%2C-28.017%2C-68.643&LABEL=MERRA2_400.inst1_2d_asm_Nx.20180101.SUB.nc&SHORTNAME=M2I1NXASM&SERVICE=SUBSET_MERRA2&VERSION=1.02&DATASET_VERSION=5.12.4"
+Template for requests : 
+http://goldsmr4.gesdisc.eosdis.nasa.gov/daac-bin/OTF/HTTP_services.cgi?FILENAME=%2Fdata%2FMERRA2%2FM2I1NXASM.5.12.4%2F2018%2F01%2FMERRA2_400.inst1_2d_asm_Nx.20180101.nc4&FORMAT=bmM0Lw&BBOX=-32.587%2C-73.213%2C-28.017%2C-68.643&LABEL=MERRA2_400.inst1_2d_asm_Nx.20180101.SUB.nc&SHORTNAME=M2I1NXASM&SERVICE=SUBSET_MERRA2&VERSION=1.02&DATASET_VERSION=5.12.4
 
 https://goldsmr4.gesdisc.eosdis.nasa.gov/daac-bin/OTF/HTTP_services.cgi?FILENAME=%2Fdata%2FMERRA2%2FM2T1NXAER.5.12.4%2F2012%2F02%2FMERRA2_400.tavg1_2d_aer_Nx.20120201.nc4&FORMAT=bmM0Lw&BBOX=-33.554%2C-72.686%2C-28.808%2C-67.939&LABEL=MERRA2_400.tavg1_2d_aer_Nx.20120201.SUB.nc&SHORTNAME=M2T1NXAER&SERVICE=SUBSET_MERRA2&VERSION=1.02&DATASET_VERSION=5.12.4
+
+http://goldsmr4.gesdisc.eosdis.nasa.gov/daac-bin/OTF/HTTP_services.cgi?FILENAME=%2Fdata%2FMERRA2%2FM2I1NXASM.5.12.4%2F2018%2F01%2FMERRA2_400.inst1_2d_asm_Nx.20180101.nc4&FORMAT=bmM0Lw&BBOX=-32.587%2C-73.213%2C-28.017%2C-68.643&LABEL=MERRA2_400.inst1_2d_asm_Nx.20180101.SUB.nc&SHORTNAME=M2I1NXASM&SERVICE=SUBSET_MERRA2&VERSION=1.02&DATASET_VERSION=5.12.4
 '''
 
 
@@ -38,6 +40,8 @@ for LSST site, ozone table, at the day == date
 def buildRequest(request_directory, site, date, parameter):
     if parameter == 'pwv':
         parameter = 'I3NVASM'
+    if parameter == 'ozone':
+        parameter = 'I1NXASM'
     if parameter == 'aod':
         parameter = 'I3NVGAS'
     if parameter == 'mmr':
@@ -52,16 +56,6 @@ def buildRequest(request_directory, site, date, parameter):
     return request, filename
 
 
-
-'''
-Retrieving 
-M2I3NVASM: MERRA-2 inst3_3d_asm_Nv: 3d,3-Hourly,Instantaneous,Model-Level,Assimilation,Assimilated Meteorological Fields V5.12.4
-Or:
-MERRA-2 inst3_3d_gas_Nv: 3d,3-Hourly,Instantaneous,Model-Level,Assimilation,Aerosol Mixing Ratio Analysis Increments V5.12.4
-Or:
-inst3_3d_aer_Nv (M2I3NVAER): Aerosol Mixing Ratio
-for a given date 
-'''
 def writeFile(request, date, site="hawaii", parameter="pwv", **kwargs):
     if (site == 'hawaii'):
         box = "16.402%2C-159.214%2C22.862%2C-152.139"
@@ -82,6 +76,9 @@ def writeFile(request, date, site="hawaii", parameter="pwv", **kwargs):
     if parameter == 'I3NVAER':
         fname = 'inst3_3d_aer_Nv'
         version = "5"
+    if parameter == 'I1NXASM':
+        version = "4"
+        fname ='inst1_2d_asm_Nx'
     if parameter == 'T1NXAER':
         fname = 'tavg1_2d_aer_Nx'
         version = "4"
@@ -123,7 +120,7 @@ def grabargs():
                                      epilog="wget merra-2 data")
     parser.add_argument('-p',"--parameters", type=str,
 		        help = "indicate a parameter : pwv, aod, mmr", 
-		        default= ['aod', 'pwv'], nargs='+')
+		        default= ['ozone', 'aod', 'pwv'], nargs='+')
     parser.add_argument('-d', '--dates',  # either of this switches
                         help = "indicate date yyyy-mm-dd or yesterday", 
                         type = str,
@@ -147,8 +144,10 @@ if __name__ == "__main__":
     site              = args.site
     dir               = args.dir
 
-
-    if dates == 'latest': # last available date is last day of last month
+    '''
+    latest available date is last day of last month
+    '''
+    if dates == 'latest': 
         today = datetime.date.today()
         last_day_of_last_month = datetime.datetime(today.year, today.month, 1) - datetime.timedelta(days=1)
         dates = [last_day_of_last_month.strftime("%Y-%m-%d")]
