@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     if site =='hawaii':
         site = 'HAWAII'
-    if site =='ctio':
+    if ((site =='ctio') and (site =='lsst')):
         site = 'CTIO'
 
 
