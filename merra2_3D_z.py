@@ -570,7 +570,7 @@ if __name__ == "__main__":
         '''
         When integrating QV, needs also pressure thickness
         '''
-        if ((name == 'QV') and (interpolate == 'False')):
+        if ((name == 'QV') and (interpolated == False)):            
             for p in ('DELP','delp'):
                 print p
                 try:
@@ -578,7 +578,8 @@ if __name__ == "__main__":
                 except:
                     print p,' not found'
             allBp.extend(deltaP)
-   
+
+
         '''
         Recording several days
         '''
