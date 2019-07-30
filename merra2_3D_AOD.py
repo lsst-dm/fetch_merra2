@@ -504,6 +504,8 @@ if __name__ == "__main__":
         pressure = 61600. # needed in pascal 
     elif site.lower() == 'ctio':
         pressure = 77600. # needed in pascal
+    elif site.lower() == 'ohp':
+        pressure = 94200. # needed in pascal
 
 
 

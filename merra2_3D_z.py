@@ -4,7 +4,7 @@ aguyonnet@fas.harvard.edu
 read, parse and 2-D plot of MERRA-2 files NetCDF4 format
 '''
 
-import toolbox as tb
+
 
 import os, sys, re
 import numpy as np
@@ -21,6 +21,21 @@ from scipy import interpolate
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import astropy.time
+
+
+
+
+def DumpTuple(names, list, file):
+    out  = open(file, 'w')
+    for i in names :
+        out.write('# '+i + ' :' +'\n')
+    out.write('#end'+ '\n')
+    list = zip(*list)
+    for i in list:
+        out.write(' '.join(map("{}".format, i))+'\n')
+    out.close()
+    return
+
 
 
 # http://www.ifa.hawaii.edu/88inch/manuals/user.pdf
@@ -428,7 +443,7 @@ def grabargs():
 		        help = "only first time stamp", 
 		        default= 0)
     parser.add_argument("--orographies", type =bool, 
-		        help = "weather or not the orography is redetermine for each file", 
+		        help = "weather or not the orography is redetermined for each file", 
 		        default = False)
     parser.add_argument("--interpolated", type =bool, 
 		        help = "for a value that is interpolated at site rather than integrated down to site", 
@@ -570,7 +585,7 @@ if __name__ == "__main__":
         '''
         When integrating QV, needs also pressure thickness
         '''
-        if ((name == 'QV') and (interpolate == 'False')):
+        if ((name == 'QV') and (interpolated == False)):            
             for p in ('DELP','delp'):
                 print p
                 try:
@@ -578,7 +593,8 @@ if __name__ == "__main__":
                 except:
                     print p,' not found'
             allBp.extend(deltaP)
-   
+
+
         '''
         Recording several days
         '''
@@ -615,7 +631,7 @@ if __name__ == "__main__":
     #for i in out:
     #    print i
     names   = ['entry', 'jd', 'value', 'SN_gradient', 'WE_gradient']
-    tb.DumpTuple(names,
+    DumpTuple(names,
                  zip(*out),
                  outname+'.list')
     print 'writing : ', str(outname+'.list')

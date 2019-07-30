@@ -33,7 +33,7 @@ http://goldsmr4.gesdisc.eosdis.nasa.gov/daac-bin/OTF/HTTP_services.cgi?FILENAME=
 
 '''
 create, name and edit the file submitting the request to the merra-2 server
-for LSST site, ozone table, at the day == date
+for LSST site, [ozone, pwv, aod] tables, at the day == date
 '''
 
 
@@ -42,9 +42,9 @@ def buildRequest(request_directory, site, date, parameter):
         parameter = 'I3NVASM'
     if parameter == 'ozone':
         parameter = 'I1NXASM'
-    if parameter == 'aod':
+    if parameter == 'aod2D':
         parameter = 'I3NVGAS'
-    if parameter == 'mmr':
+    if parameter == 'aod':
         parameter = 'I3NVAER'
     if parameter == 'angstrom':
         parameter = 'T1NXAER'
@@ -59,6 +59,9 @@ def buildRequest(request_directory, site, date, parameter):
 def writeFile(request, date, site="hawaii", parameter="pwv", **kwargs):
     if (site == 'hawaii'):
         box = "16.402%2C-159.214%2C22.862%2C-152.139"
+    if (site == 'ohp'):
+        # 2.549, 41.275, 7.822, 45.757
+        box = "41.275%2C-2.549%2C45.757%2C7.822"
     if (site == 'ctio' or site == 'lsst'):
         box= "-32.499%2C-74.399%2C-26.698%2C-67.983"
     time    = '%04d%02d%02d'%(date.year, date.month, date.day)
@@ -131,7 +134,7 @@ def grabargs():
 	                help = "indicate a site", 
 	                default='lsst')
     parser.add_argument('-r',"--dir", type=str, 
-	                help = "downloading in directory", 
+	                help = "downloading tables in directory dir", 
 	                default='./')
     args = parser.parse_args()
     return args
