@@ -5,7 +5,6 @@ read, parse and extract parameters above given sites from MERRA-2 files NetCDF4 
 '''
 
 from mpl_toolkits.basemap import Basemap
-import toolbox as tb
 import os, sys, re
 import numpy as np
 import matplotlib.pyplot as pl
@@ -19,6 +18,21 @@ import astropy.time
 from mpl_toolkits.mplot3d import Axes3D
 
 g       = 9.81 # pesanteur
+
+
+def DumpTuple(names, list, file):
+    out  = open(file, 'w')
+    for i in names :
+        out.write('# '+i + ' :' +'\n')
+    out.write('#end'+ '\n')
+    list = zip(*list)
+    for i in list:
+        out.write(' '.join(map("{}".format, i))+'\n')
+    out.close()
+    return
+
+
+
 
 def Beta(rh, type):
     unit  = 1000. 
